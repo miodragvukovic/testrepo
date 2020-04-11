@@ -3,29 +3,92 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap" rel="stylesheet">
-        <title>Miljini prvi koraci</title>
         <style>
             * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
             }
-            div {
-                padding: 100px;
-            }
             h1 {
                 font-family: 'Kaushan Script', cursive;
-                font-size: 65px;
+                font-size: 50px;
             }
-            .margin-left {
-                margin-left: 150px;
+            h1::first-letter {
+                text-transform: capitalize;
+            }
+            main {
+                height: 100vh;
+                width: 100%;
+                padding: 0 20px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
             }
         </style>
+        <title>Sat za lenje osobe</title>
     </head>
     <body>
-        <div>
-            <h1>"Ako stanemo</h1>
-            <h1 class="margin-left">gubimo sve"</h1>
-        </div>
+        
+        <!-- Start of Template -->
+        <main>
+            <h1 id="timer"></h1>
+        </main>
+        <!-- End of Template -->
+        
+        <script>
+
+            // GLOBAL VARIABLES (NUMBERS TO WORDS)
+            const wordsForHours = ['jedan', 'dva', 'tri', 'cetiri', 'pet', 'sest', 'sedam', 'osam', 'devet', 'deset', 'jedanaest', 'dvanaest'],
+                wordsForMinutes = ['jedan', 'dva', 'tri', 'cetiri', 'pet', 'sest', 'sedam', 'osam', 'devet', 'deset', 
+                'jedanaest', 'dvanaest', 'trinaest', 'cetrnaest', 'petnaest', 'sesnaest', 'sedamnaest', 'osamnaest', 'devetnaest', 'dvadeset', 
+                'dvadeset jedan', 'dvadeset dva', 'dvadeset tri', 'dvadeset cetiri', 'dvadeset pet', 'dvadeset sest', 'dvadeset sedam', 'dvadeset osam', 'dvadeset devet']
+
+            // GENERATE TIME FUNCTION (MASTER FUNCTION)
+            function generateTime() {
+                let date = new Date(),
+                    minutes = date.getMinutes(),
+                    seconds = date.getSeconds(), // STILL DOING NOTHING
+                    rawHours = date.getHours(),
+                    hours = () => {
+                        if ( minutes < 30 && minutes != 0 ) {
+                            if ( rawHours == 0 )
+                                rawHours = 12;
+                        } else {
+                            if ( rawHours == 12 )
+                                rawHours = 0;
+                        }
+                        return rawHours > 12 ? rawHours - 12 : rawHours;
+                    }
+                return {hours, minutes, seconds};
+            }
+
+            // PARSE STRING INTO SINGULAR OR PLURAL
+            function minutesString(param) {
+                let minutes = (String(param)).split(''),
+                    lastCharacterInArray = minutes[minutes.length - 1];
+                return lastCharacterInArray == 1 ? 'minut' : 'minuta';
+            }
+
+            // GENERATES FULL STRING
+            function generateWords() {
+                if ( generateTime().minutes < 30 && generateTime().minutes != 0 )
+                    return `${wordsForHours[generateTime().hours() - 1]} i ${wordsForMinutes[generateTime().minutes - 1]} ${minutesString(generateTime().minutes)}`;
+                else if ( generateTime().minutes == 0 )
+                    return wordsForHours[generateTime().hours()];
+                else if ( generateTime().minutes == 30 )
+                    return `pola ${wordsForHours[generateTime().hours()]}`;
+                const minutes = 60 - generateTime().minutes;
+                return `${wordsForMinutes[minutes - 1]} ${minutesString(minutes)} do ${wordsForHours[generateTime().hours()]}`;
+            }
+
+            // INITIAL DISPLAY
+            document.getElementById('timer').innerHTML = generateWords();
+            
+            // THIS INTERVAL CALLS UPON THE MASTER FUNCTION
+            setInterval(() => {
+                document.getElementById('timer').innerHTML = generateWords();
+            }, 5000);
+
+        </script>
     </body>
 </html>
