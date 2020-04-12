@@ -67,6 +67,8 @@
             function minutesString(param) {
                 let minutes = (String(param)).split(''),
                     lastCharacterInArray = minutes[minutes.length - 1];
+                if ( param == 11 )
+                    return 'minuta';
                 return lastCharacterInArray == 1 ? 'minut' : 'minuta';
             }
 
